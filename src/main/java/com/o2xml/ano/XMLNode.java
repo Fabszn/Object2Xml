@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 public @interface XMLNode {
 	
 	
-	String path() ;
+	String xpath() ;
 	String name();
 
 }
