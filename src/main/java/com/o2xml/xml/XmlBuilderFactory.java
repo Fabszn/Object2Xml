@@ -4,9 +4,9 @@ public class XmlBuilderFactory {
 	
 	private XmlBuilderFactory(){}
 	
-	public static XmlBuilder createXmlBuilder(){
+	public static XmlBuilder createXmlBuilder(String root){
 		
-		return null;
+		return new DOMXmlBuilder(root);
 		
 	}
 
