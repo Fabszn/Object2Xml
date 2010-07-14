@@ -2,13 +2,14 @@ package com.o2xml.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class DOMXmlElement implements XmlElement{
 
-	private Element element = null;
+	private Node element = null;
 	private Document document = null;
 	
-	protected DOMXmlElement(Element _element,Document _refDocument){
+	protected DOMXmlElement(Node _element,Document _refDocument){
 		this.element =_element;	
 		this.document = _refDocument;
 	}
