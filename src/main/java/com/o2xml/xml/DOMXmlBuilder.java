@@ -55,7 +55,7 @@ public class DOMXmlBuilder implements XmlBuilder {
 	 * @param xPathQuery
 	 * @return XmlElement
 	 */
-	public XmlElement findElement(String xPathQuery){
+	public XmlElement findElementByXPathQuery(String xPathQuery){
 		
 		//implementation de la recherche base sur un element a partir d'une requete Xpath
 		return null;
@@ -63,8 +63,6 @@ public class DOMXmlBuilder implements XmlBuilder {
 	}
 	
 	public XmlElement findElementById(String id){
-		
-		System.out.println(internalDocument.getElementById(id));
 		return new DOMXmlElement(internalDocument.getElementsByTagName(id).item(0),this.internalDocument);
 	}
 
@@ -74,7 +72,6 @@ public class DOMXmlBuilder implements XmlBuilder {
 		
 		try {
 			Source source = new DOMSource(internalDocument);
-			//File f = new File("xml.xml");
 			sw = new StringWriter();
 			Result r = new StreamResult(sw);
 			

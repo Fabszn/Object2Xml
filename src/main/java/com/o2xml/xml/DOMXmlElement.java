@@ -36,8 +36,14 @@ public class DOMXmlElement implements XmlElement{
 		nom.setTextContent(value);
 		element.appendChild(nom);
 		
-		return this;
+		return new DOMXmlElement(nom,this.document);
 
+	}
+	
+	@Override
+	public boolean isValidXmlElement() {
+	
+		return element!=null && document!=null;
 	}
 
 	
