@@ -1,0 +1,5 @@
+Liste des choses à faire sur l'api.
+
+- rendre le paramètre name facultatif sur l'annotation xmlNode
+-+ gérer les types de retour d'objet complexe (EL)
+- possibilité d'appeler plusieurs méthode sur un type de retour d'objet (tableau de nom de méthode param : methods)
