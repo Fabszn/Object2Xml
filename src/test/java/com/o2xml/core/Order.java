@@ -8,6 +8,11 @@ public class Order {
 		return id;
 	}
 
+	public String orderLabel(){
+		return "label " + id;
+	}
+	
+	
 	public void setId(int id) {
 		this.id = id;
 	}

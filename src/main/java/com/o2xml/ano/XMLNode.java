@@ -16,5 +16,8 @@ public @interface XMLNode {
 	
 	String xpath() default "" ;
 	String name();
+	String nodeParent() default "";
+	String method() default "";
+	String[] methods() default {};
 
 }

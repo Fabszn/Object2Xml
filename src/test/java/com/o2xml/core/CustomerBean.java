@@ -48,7 +48,7 @@ public class CustomerBean {
 		return new Double[]{new Double(12)};
 	}
 	
-	@XMLNode(name="odr")
+	@XMLNode(name="odr",method="orderLabel")
 	public List<Order> getCollection(){
 		return o;
 	}

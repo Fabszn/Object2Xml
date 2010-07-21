@@ -99,19 +99,20 @@ public class Object2XmlEngine {
 
 		try {
 			returnObject = m.invoke(o, new Object[0]);
-
+			//TODO : Factorisation du traitement des nodeItems
 			if (EngineUtils.isArrayType(returnObject)) {
-				String nodeParent = extractNodeNameFromMethodSignature(m);
+				String nodeParent = extractNodeNameFromMethodSignature(m,an);
 				for (Object currentobject : (Object[]) returnObject) {
-					nodeItems.add(NodeItem.buildNodeItem(currentobject.toString(), an,nodeParent));
+					nodeItems.add(NodeItem.buildNodeItem(compileValue(currentobject,an), an,nodeParent));
 				}
 			} else if (isCollectionType(returnObject)) {
-				String nodeParent = extractNodeNameFromMethodSignature(m);
+				String nodeParent = extractNodeNameFromMethodSignature(m,an);
 				for (Object currentobject : (Collection<?>) returnObject) {
-					nodeItems.add(NodeItem.buildNodeItem(currentobject.toString(), an,nodeParent));
-				}
+					nodeItems.add(NodeItem.buildNodeItem(compileValue(currentobject,an), an,nodeParent));
+				} 
 			} else {
-				nodeItems.add(NodeItem.buildNodeItem(returnObject.toString(), an));
+				String nodeParent = ((XMLNode)an).nodeParent();
+				nodeItems.add(NodeItem.buildNodeItem(compileValue(returnObject,an), an,(nodeParent.isEmpty()?null:nodeParent)));
 			}
 
 			return nodeItems;

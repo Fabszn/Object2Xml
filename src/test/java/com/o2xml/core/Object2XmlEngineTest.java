@@ -42,10 +42,10 @@ public class Object2XmlEngineTest{
 	private void buildCollection(CustomerBean c) {
 		List<Order> orders = new ArrayList<Order>();
 		Order o = new Order();
-		o.setId(4);
+		o.setId(1);
 		orders.add(o);
 		Order o1 = new Order();
-		o1.setId(8);
+		o1.setId(2);
 		orders.add(o1);
 		c.setCollection(orders);
 		
