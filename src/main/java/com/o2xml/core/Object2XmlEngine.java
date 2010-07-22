@@ -99,7 +99,7 @@ public class Object2XmlEngine {
 
 		try {
 			returnObject = m.invoke(o, new Object[0]);
-			if (EngineUtils.isArrayType(returnObject)) {
+			if (EngineUtils.isArrayType(returnObject)) {fabrice
 				String nodeParent = extractNodeNameFromMethodSignature(m,an);
 				for (Object currentobject : (Object[]) returnObject) {
 					nodeItems.add(NodeItem.buildNodeItem(compileValue(currentobject,an), an,nodeParent));
