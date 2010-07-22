@@ -99,7 +99,6 @@ public class Object2XmlEngine {
 
 		try {
 			returnObject = m.invoke(o, new Object[0]);
-			//TODO : Factorisation du traitement des nodeItems
 			if (EngineUtils.isArrayType(returnObject)) {
 				String nodeParent = extractNodeNameFromMethodSignature(m,an);
 				for (Object currentobject : (Object[]) returnObject) {

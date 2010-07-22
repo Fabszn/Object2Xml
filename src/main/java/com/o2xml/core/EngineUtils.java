@@ -44,6 +44,13 @@ public class EngineUtils {
 		return finalName;
 	}
 	
+	/**
+	 * Compile value of object o. Compilation check 
+	 * if XMLNode's attribute was used if not toString()'s method invoked.
+	 * @param o
+	 * @param _an
+	 * @return
+	 */
 	public static String compileValue(Object o,Annotation _an){
 		final String method = ((XMLNode) _an).method();
 		String value = null;
