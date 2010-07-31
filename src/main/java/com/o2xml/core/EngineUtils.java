@@ -2,9 +2,14 @@ package com.o2xml.core;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import com.o2xml.ano.XMLNode;
+import com.o2xml.ano.XMLNodes;
 import com.o2xml.el.MethodInvocator;
 
 /**
@@ -43,31 +48,41 @@ public class EngineUtils {
 		}
 		return finalName;
 	}
-	
-	/**
-	 * Compile value of object o. Compilation check 
-	 * if XMLNode's attribute was used if not toString()'s method invoked.
-	 * @param o
-	 * @param _an
-	 * @return
-	 */
-	public static String compileValue(Object o,Annotation _an){
-		final String method = ((XMLNode) _an).method();
-		String value = null;
+
+	public static List<String> compileValue(Object o, XMLNode _an) {
+		final String method = _an.method();
 		
-		if(method.isEmpty()){
-			value = o.toString();
-		}else{
-			try {
-				value=MethodInvocator.invoke(o, method);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		List<String> values = new ArrayList<String>();
+		try {
+			if (!method.isEmpty()) {
+				values.add(MethodInvocator.invoke(o, method));
+			} else {
+				values.add(o==null?"":o.toString());
 			}
+		} catch (Exception e) {
+			//TODO implemented specific exception
+			e.printStackTrace();
 		}
-		
-		
-		return value;
+
+		return values;
 	}
 
+	public static List<String> compileValues(Object o, XMLNodes _an) {
+		final String[] methods = _an.methods();
+
+		List<String> values = new ArrayList<String>();
+		try {
+			if (!(methods.length == 0)) {
+
+				for (String m : methods) {
+					values.add(MethodInvocator.invoke(o, m));
+				}
+			}
+		} catch (Exception e) {
+			//TODO implemented specific exception
+			e.printStackTrace();
+		}
+
+		return values;
+	}
 }

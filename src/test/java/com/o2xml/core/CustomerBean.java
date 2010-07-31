@@ -31,7 +31,7 @@ public class CustomerBean {
 		this.orders = orders;
 	}
 	
-	
+	@XMLNode(name="EmailAdresse")
 	public String[] getEmailAdresses() {
 		return emailAdresses;
 	}

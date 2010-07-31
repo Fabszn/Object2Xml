@@ -11,14 +11,13 @@ import java.lang.annotation.Target;
 @Documented
 @Target(METHOD)
 @Retention(RUNTIME)
-public @interface XMLNode  {
+public @interface XMLNodes  {
 	
 	
 	String xpath() default "" ;
-	String name();
+	String[] names();
 	String nodeParent() default "";
-	String method() default "";
+	String[] methods();
 	boolean isHideIfNull() default false;
-
 
 }

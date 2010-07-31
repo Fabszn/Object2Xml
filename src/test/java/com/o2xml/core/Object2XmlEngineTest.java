@@ -18,7 +18,7 @@ public class Object2XmlEngineTest{
 		c.setName("Le nom du capitaine est biniou");
 		buildArray(c);
 		buildCollection(c);
-		
+		buildMailArray(c);
 		try {
 			Object2XmlEngine.transformObject2XML(c);
 		} catch (EngineException e) {
@@ -37,6 +37,17 @@ public class Object2XmlEngineTest{
 		o1.setId(2);
 		t[1]=o1;
 		c.setOrders(t);
+	}
+	
+	private void buildMailArray(CustomerBean c) {
+		String[] t = new String[2];
+		String o = null;
+		
+		t[0]=o;
+		String o1 = new String("mail2");
+		
+		t[1]=o1;
+		c.setEmailAdresses(t);
 	}
 	
 	private void buildCollection(CustomerBean c) {
