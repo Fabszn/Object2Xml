@@ -3,6 +3,7 @@ package com.o2xml.core;
 import java.util.List;
 
 import com.o2xml.ano.XMLNode;
+import com.o2xml.ano.XMLNodesAdvanced;
 import com.o2xml.ano.XMLRoot;
 
 @XMLRoot(rootName="RacineDelobjet")
@@ -12,7 +13,7 @@ public class CustomerBean {
 	private List<Order> o = null;
 	private String[] emailAdresses = null;
 
-	@XMLNode(name="MyName")
+	@XMLNode(name="MyName",nodeParent="data")
 	public String getName() {
 		return name;
 	}
@@ -48,7 +49,8 @@ public class CustomerBean {
 		return new Double[]{new Double(12)};
 	}
 	
-	@XMLNode(name="odr",method="orderLabel")
+//	@XMLNode(name="odr",method="orderLabel")
+	@XMLNodesAdvanced(names="odr",methods="orderLabel",nodeParent="bidou#data#orders")
 	public List<Order> getCollection(){
 		return o;
 	}

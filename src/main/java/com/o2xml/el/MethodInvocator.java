@@ -7,6 +7,8 @@ import com.o2xml.core.CustomerBean;
 
 public class MethodInvocator {
 
+	private static final String KEY_METHOD_SEPARATOR = "#";
+
 	/**
 	 * give object instance and method name to invoke on it
 	 * 
@@ -18,7 +20,7 @@ public class MethodInvocator {
 
 		Object currentObject = o;
 		String valeur = "";
-		StringTokenizer st = new StringTokenizer(methodName, "#");
+		StringTokenizer st = new StringTokenizer(methodName, KEY_METHOD_SEPARATOR);
 		int nbtoken = st.countTokens();
 		int idx = 0;
 		try {
@@ -34,7 +36,10 @@ public class MethodInvocator {
 						valeur = currentObject == null ? "" : ""
 								+ currentObject;
 					}
+				}else{
+					break;
 				}
+				
 			}
 		} catch (Exception e) {
 			// TODO implemented specific exception

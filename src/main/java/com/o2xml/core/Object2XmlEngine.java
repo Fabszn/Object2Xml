@@ -1,19 +1,22 @@
 package com.o2xml.core;
 
+import static com.o2xml.core.AnnotationAnalyzer.analyze;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import static com.o2xml.core.EngineUtils.*;
+import java.util.StringTokenizer;
 
 import com.o2xml.ano.XMLNode;
 import com.o2xml.ano.XMLNodes;
+import com.o2xml.ano.XMLNodesAdvanced;
 import com.o2xml.ano.XMLRoot;
 import com.o2xml.core.exception.EngineException;
 import com.o2xml.xml.XmlBuilder;
 import com.o2xml.xml.XmlBuilderFactory;
 import com.o2xml.xml.XmlElement;
+
 
 public class Object2XmlEngine {
 
@@ -25,17 +28,9 @@ public class Object2XmlEngine {
 		XmlBuilder dxb = XmlBuilderFactory.createXmlBuilder(root);
 
 		for (NodeItem ni : l) {
-			String nodeParent = root;
-			String n = ni.getParentNode();
-
-			if (n != null) {
-				nodeParent = n;
-			}
-			XmlElement parent = dxb.findElementById(nodeParent);
-			if (!parent.isValidXmlElement()) {
-				parent = dxb.findElementById(root).addChild(nodeParent, null);
-			}
+			XmlElement parent = obtainParentNode(root, dxb, ni);
 			parent.addChild(ni.getNodeName(), ni.getValue());
+
 		}
 
 		System.out.println(dxb.getXml());
@@ -53,15 +48,19 @@ public class Object2XmlEngine {
 						XMLNode.class);
 				if (xmlNode != null) {
 
-					nodeItems.addAll(methodTreatment(o, me, xmlNode));
+					nodeItems.addAll(analyze(o, me, xmlNode));
 
 				}
 				XMLNodes xmlNodes = getAnnotationInformationFromMethod(me,
 						XMLNodes.class);
 				if (xmlNodes != null) {
+					nodeItems.addAll(analyze(o, me, xmlNodes));
+				}
 
-					nodeItems.addAll(methodTreatment(o, me, xmlNodes));
-
+				XMLNodesAdvanced xmlNodesAdvanced = getAnnotationInformationFromMethod(
+						me, XMLNodesAdvanced.class);
+				if (xmlNodesAdvanced != null) {
+					nodeItems.addAll(analyze(o, me, xmlNodesAdvanced));
 				}
 			}
 
@@ -98,61 +97,32 @@ public class Object2XmlEngine {
 
 	}
 
-	private static List<NodeItem> methodTreatment(Object o, Method m, XMLNode an)
-			throws EngineException {
-		Object returnObject = null;
+	private static XmlElement obtainParentNode(final String root,
+			XmlBuilder dxb, NodeItem ni) {
 
-		List<NodeItem> nodeItems = new ArrayList<NodeItem>();
+		
+		String n = ni.getParentNode();
+		XmlElement refNode = null;
+		XmlElement refParent = dxb.findElementById(root);
+		if (n != null) {
 
-		try {
-			returnObject = m.invoke(o, new Object[0]);
-			// TODO : Factorisation du traitement des nodeItems
-			if (EngineUtils.isArrayType(returnObject)) {
-				String nodeParent = extractNodeNameFromMethodSignature(m, an);
-				for (Object currentobject : (Object[]) returnObject) {
-					nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-							currentobject, an), an, nodeParent));
+			final StringTokenizer st = new StringTokenizer(n, "#");
+			
+			while (st.hasMoreTokens()) {
+				String node = st.nextToken();
+			
+				refNode = dxb.findElementById(node);
+				if (!refNode.isValidXmlElement()) {
+					refParent = dxb.findElementById(refParent.getId())
+							.addChild(node, null);
+				}else{
+					refParent=refNode;
 				}
-			} else if (isCollectionType(returnObject)) {
-				String nodeParent = extractNodeNameFromMethodSignature(m, an);
-				for (Object currentobject : (Collection<?>) returnObject) {
-					nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-							currentobject, an), an, nodeParent));
-				}
-			} else {
-				String nodeParent = (an).nodeParent();
-				nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-						returnObject, an), an, (nodeParent.isEmpty() ? null
-						: nodeParent)));
+
 			}
 
-			return nodeItems;
-
-		} catch (Exception e) {
-			throw new EngineException(
-					"Exception throws during method theatment : " + m, e);
 		}
-	}
-
-	private static List<NodeItem> methodTreatment(Object o, Method m,
-			XMLNodes an) throws EngineException {
-		
-
-		List<NodeItem> nodeItems = new ArrayList<NodeItem>();
-
-		try {
-			Object returnObject =  m.invoke(o, new Object[0]);
-
-			String nodeParent = (an).nodeParent();
-			nodeItems.addAll(NodeItem.buildNodeItem(compileValues(returnObject,
-					an), an, (nodeParent.isEmpty() ? null : nodeParent)));
-
-			return nodeItems;
-
-		} catch (Exception e) {
-			throw new EngineException(
-					"Exception throws during method theatment : " + m, e);
-		}
+		return refParent;
 	}
 
 }
@@ -160,20 +130,16 @@ public class Object2XmlEngine {
 class NodeItem {
 
 	private String nodeName = null;
-	private String xpathDef = null;
 	private String value = null;
 	private String parentNode = null;
 
-	private NodeItem(String _nodeName, String _xpathDef, String _value) {
+	private NodeItem(String _nodeName, String _value) {
 		this.nodeName = _nodeName;
-		this.xpathDef = _xpathDef;
 		this.value = _value;
 	}
 
-	private NodeItem(String _nodeName, String _xpathDef, String _value,
-			String _nodeParent) {
+	private NodeItem(String _nodeName, String _value, String _nodeParent) {
 		this.nodeName = _nodeName;
-		this.xpathDef = _xpathDef;
 		this.value = _value;
 		this.parentNode = _nodeParent;
 	}
@@ -181,27 +147,25 @@ class NodeItem {
 	protected static List<NodeItem> buildNodeItem(List<String> values,
 			XMLNode an, String nodeParent) {
 		final List<NodeItem> nodeItems = new ArrayList<NodeItem>();
-		
+
 		for (String value : values) {
-			if((!value.isEmpty())||(value.isEmpty() && !an.isHideIfNull())){
-				nodeItems.add(new NodeItem((an).name(), an
-						.xpath(), value, nodeParent));
+			if ((!value.isEmpty()) || (value.isEmpty() && !an.isHideIfNull())) {
+				nodeItems.add(new NodeItem((an).name(), value, nodeParent));
 			}
 		}
 
 		return nodeItems;
 	}
-	
+
 	protected static List<NodeItem> buildNodeItem(List<String> values,
-			XMLNodes an, String nodeParent) {
+			String[] names, String nodeParent, boolean isHideIfNull) {
 		final List<NodeItem> nodeItems = new ArrayList<NodeItem>();
 
-		for (int i=0;i<values.size();i++) {
-			
+		for (int i = 0; i < values.size(); i++) {
+
 			String value = values.get(i);
-			if((!value.isEmpty())||(value.isEmpty() && !an.isHideIfNull())){
-				nodeItems.add(new NodeItem( an.names()[i], an
-						.xpath(), value, nodeParent));
+			if ((!value.isEmpty()) || (value.isEmpty() && !isHideIfNull)) {
+				nodeItems.add(new NodeItem(names[i], value, nodeParent));
 			}
 		}
 
@@ -223,14 +187,6 @@ class NodeItem {
 
 	public void setNodeName(String nodeName) {
 		this.nodeName = nodeName;
-	}
-
-	public String getXpathDef() {
-		return xpathDef;
-	}
-
-	public void setXpathDef(String xpathDef) {
-		this.xpathDef = xpathDef;
 	}
 
 	public String getParentNode() {

@@ -49,9 +49,8 @@ public class EngineUtils {
 		return finalName;
 	}
 
-	public static List<String> compileValue(Object o, XMLNode _an) {
-		final String method = _an.method();
-		
+	public static List<String> compileValue(Object o, String method) {
+				
 		List<String> values = new ArrayList<String>();
 		try {
 			if (!method.isEmpty()) {
@@ -67,9 +66,7 @@ public class EngineUtils {
 		return values;
 	}
 
-	public static List<String> compileValues(Object o, XMLNodes _an) {
-		final String[] methods = _an.methods();
-
+	public static List<String> compileValues(Object o, String[] methods) {
 		List<String> values = new ArrayList<String>();
 		try {
 			if (!(methods.length == 0)) {

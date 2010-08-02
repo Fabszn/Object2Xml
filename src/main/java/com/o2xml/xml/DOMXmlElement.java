@@ -27,16 +27,16 @@ public class DOMXmlElement implements XmlElement{
 	}
 
 	/**
-	 * add child to the current element.
+	 * add child with his value to the current element.
 	 * @return current XmlElement 
 	 */
 	@Override
 	public XmlElement addChild(String tagName, String value) {
-		Element nom = this.document.createElement(tagName);
-		nom.setTextContent(value);
-		element.appendChild(nom);
+		Element elem = this.document.createElement(tagName);
+		elem.setTextContent(value);
+		element.appendChild(elem);
 		
-		return new DOMXmlElement(nom,this.document);
+		return new DOMXmlElement(elem,this.document);
 
 	}
 	
@@ -45,6 +45,14 @@ public class DOMXmlElement implements XmlElement{
 	
 		return element!=null && document!=null;
 	}
+
+
+	@Override
+	public String getId() {
+		return element!=null?element.getNodeName():null;
+	}
+	
+	
 
 	
 

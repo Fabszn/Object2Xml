@@ -11,5 +11,7 @@ public interface XmlElement {
 	 * @return true if it's valid, otherwise false.
 	 */
 	public boolean isValidXmlElement();
+	
+	public String getId();
 
 }
