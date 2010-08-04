@@ -6,6 +6,9 @@ import org.w3c.dom.Node;
 
 public class DOMXmlElement implements XmlElement{
 
+	
+
+
 	private Node element = null;
 	private Document document = null;
 	
@@ -50,6 +53,12 @@ public class DOMXmlElement implements XmlElement{
 	@Override
 	public String getId() {
 		return element!=null?element.getNodeName():null;
+	}
+	
+	@Override
+	public XmlElement getParent() {
+		
+		return new DOMXmlElement(element.getParentNode(),document);
 	}
 	
 	

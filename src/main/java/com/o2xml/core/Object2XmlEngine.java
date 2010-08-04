@@ -17,7 +17,6 @@ import com.o2xml.xml.XmlBuilder;
 import com.o2xml.xml.XmlBuilderFactory;
 import com.o2xml.xml.XmlElement;
 
-
 public class Object2XmlEngine {
 
 	public static void transformObject2XML(Object o) throws EngineException {
@@ -28,8 +27,17 @@ public class Object2XmlEngine {
 		XmlBuilder dxb = XmlBuilderFactory.createXmlBuilder(root);
 
 		for (NodeItem ni : l) {
-			XmlElement parent = obtainParentNode(root, dxb, ni);
-			parent.addChild(ni.getNodeName(), ni.getValue());
+
+			if (ni.isStandaloneNode()) {
+				XmlElement parent = obtainParentNode(root, dxb, ni);
+				List<NodeItem> children = ni.getChild();
+				for (INodeItem child : children) {
+					parent.addChild(child.getNodeName(), child.getValue());
+				}
+			} else {
+				XmlElement parent = obtainParentNode(root, dxb, ni);
+				parent.addChild(ni.getNodeName(), ni.getValue());
+			}
 
 		}
 
@@ -98,103 +106,34 @@ public class Object2XmlEngine {
 	}
 
 	private static XmlElement obtainParentNode(final String root,
-			XmlBuilder dxb, NodeItem ni) {
+			XmlBuilder dxb, INodeItem ni) {
 
-		
-		String n = ni.getParentNode();
+		String n = ni.getNodeParent();
 		XmlElement refNode = null;
 		XmlElement refParent = dxb.findElementById(root);
 		if (n != null) {
 
 			final StringTokenizer st = new StringTokenizer(n, "#");
-			
 			while (st.hasMoreTokens()) {
 				String node = st.nextToken();
-			
+
 				refNode = dxb.findElementById(node);
 				if (!refNode.isValidXmlElement()) {
 					refParent = dxb.findElementById(refParent.getId())
 							.addChild(node, null);
-				}else{
-					refParent=refNode;
+				} else {
+					refParent = refNode;
 				}
 
 			}
-
+			
+		}
+		
+		if (ni.isStandaloneNode()) {
+			refParent = dxb.findElementById(refParent.getParent().getId()).addChild(refParent.getId(),
+					null);
 		}
 		return refParent;
-	}
-
-}
-
-class NodeItem {
-
-	private String nodeName = null;
-	private String value = null;
-	private String parentNode = null;
-
-	private NodeItem(String _nodeName, String _value) {
-		this.nodeName = _nodeName;
-		this.value = _value;
-	}
-
-	private NodeItem(String _nodeName, String _value, String _nodeParent) {
-		this.nodeName = _nodeName;
-		this.value = _value;
-		this.parentNode = _nodeParent;
-	}
-
-	protected static List<NodeItem> buildNodeItem(List<String> values,
-			XMLNode an, String nodeParent) {
-		final List<NodeItem> nodeItems = new ArrayList<NodeItem>();
-
-		for (String value : values) {
-			if ((!value.isEmpty()) || (value.isEmpty() && !an.isHideIfNull())) {
-				nodeItems.add(new NodeItem((an).name(), value, nodeParent));
-			}
-		}
-
-		return nodeItems;
-	}
-
-	protected static List<NodeItem> buildNodeItem(List<String> values,
-			String[] names, String nodeParent, boolean isHideIfNull) {
-		final List<NodeItem> nodeItems = new ArrayList<NodeItem>();
-
-		for (int i = 0; i < values.size(); i++) {
-
-			String value = values.get(i);
-			if ((!value.isEmpty()) || (value.isEmpty() && !isHideIfNull)) {
-				nodeItems.add(new NodeItem(names[i], value, nodeParent));
-			}
-		}
-
-		return nodeItems;
-
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public String getNodeName() {
-		return nodeName;
-	}
-
-	public void setNodeName(String nodeName) {
-		this.nodeName = nodeName;
-	}
-
-	public String getParentNode() {
-		return parentNode;
-	}
-
-	public void setParentNode(String parentNode) {
-		this.parentNode = parentNode;
 	}
 
 }

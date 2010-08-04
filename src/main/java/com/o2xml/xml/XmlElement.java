@@ -5,6 +5,7 @@ public interface XmlElement {
 	
 	public XmlElement addChild(String tagName, String value);
 	public XmlElement addChild(String tagName, String tagValue, String tagAttributeName, String attributeValue);
+	public XmlElement getParent();
 	
 	/**
 	 * indicated if the encapsulated element is valid

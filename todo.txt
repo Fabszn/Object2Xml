@@ -1,6 +1,9 @@
-TODO List
+Liste des choses à faire sur l'api.
 
 - rendre le paramètre name facultatif sur l'annotation xmlNode
 -+ gérer les types de retour d'objet complexe (EL)
-- possibilité d'appeler plusieurs méthodes sur un type de retour d'objet (tableau de nom de méthode param : methods)
-- Factoriser le code de la méthode methodThreatment
++ possibilité d'appeler plusieurs méthode sur un type de retour d'objet (tableau de nom de méthode param : methods)
+
+Bugs : 
+
+- dans le cas d'une liste d'objets complexes une balise vide est générée.. il faut la supprimer

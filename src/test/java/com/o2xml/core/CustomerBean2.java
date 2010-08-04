@@ -7,7 +7,7 @@ import com.o2xml.ano.XMLNodesAdvanced;
 import com.o2xml.ano.XMLRoot;
 
 @XMLRoot(rootName="racine")
-public class CustomerBean {
+public class CustomerBean2 {
     private String name = null;
 	private Order[] orders = null;
 	private List<Order> o = null;
@@ -23,7 +23,7 @@ public class CustomerBean {
 		this.name = name;
 	}
 
-	@XMLNode(name="order")
+	//@XMLNode(name="order")
 	public Order[] getOrders() {
 		return orders;
 	}
@@ -32,7 +32,7 @@ public class CustomerBean {
 		this.orders = orders;
 	}
 	
-	@XMLNode(name="EmailAdresse")
+	//@XMLNode(name="EmailAdresse")
 	public String[] getEmailAdresses() {
 		return emailAdresses;
 	}
@@ -50,7 +50,7 @@ public class CustomerBean {
 	}
 	
 //	@XMLNode(name="odr",method="orderLabel")
-	@XMLNodesAdvanced(names="odr",methods="orderLabel",nodeParent="bidou#data#orders",isStandaloneChildNode=true)
+	//@XMLNodesAdvanced(names="odr",methods="orderLabel",nodeParent="bidou#data#orders",isStandaloneChildNode=true)
 	public List<Order> getCollection(){
 		return o;
 	}

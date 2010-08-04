@@ -30,21 +30,21 @@ public class AnnotationAnalyzer {
 			// TODO : Factorisation du traitement des nodeItems
 			if (EngineUtils.isArrayType(returnObject)) {
 				String nodeParent = extractNodeNameFromMethodSignature(m, an);
-				for (Object currentobject : (Object[]) returnObject) {
+				for (Object currentObject : (Object[]) returnObject) {
 					nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-							currentobject, an.method()), an, nodeParent));
+							currentObject, an.method()), an.name(), nodeParent, an.isHideIfNull()));
 				}
 			} else if (isCollectionType(returnObject)) {
 				String nodeParent = extractNodeNameFromMethodSignature(m, an);
-				for (Object currentobject : (Collection<?>) returnObject) {
+				for (Object currentObject : (Collection<?>) returnObject) {
 					nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-							currentobject, an.method()), an, nodeParent));
+							currentObject, an.method()), an.name(), nodeParent,an.isHideIfNull()));
 				}
 			} else {
 				String nodeParent = (an).nodeParent();
 				nodeItems.addAll(NodeItem.buildNodeItem(compileValue(
-						returnObject, an.method()), an,
-						(nodeParent.isEmpty() ? null : nodeParent)));
+						returnObject, an.method()), an.name(),
+						(nodeParent.isEmpty() ? null : nodeParent),an.isHideIfNull()));
 			}
 
 			return nodeItems;
@@ -89,23 +89,38 @@ public class AnnotationAnalyzer {
 					throw new IllegalArgumentException(
 							"it's a wrong type, it must be a sub-class  of collection");
 				}
-
+				
 				for (Object co : (Collection<?>) listObject) {
-					// Object returnObject = m.invoke(co, new Object[0]);
-
-					String nodeParent = (an).nodeParent();
-					nodeItems.addAll(NodeItem.buildNodeItem(compileValues(co,
-							an.methods()), an.names(),
-							(nodeParent.isEmpty() ? null : nodeParent), an
-									.isHideIfNull()));
-
+					
+					buildNoteItems(an, nodeItems, co);
 				}
+
 			}
 			return nodeItems;
 
 		} catch (Exception e) {
 			throw new EngineException(
 					"Exception throws during method analyze : " + m, e);
+		}
+	}
+
+	private static void buildNoteItems(XMLNodesAdvanced an,
+			List<NodeItem> nodeItems, Object co) {
+		String nodeParent = (an).nodeParent();
+		List<NodeItem> nodeItemForObjectItem = NodeItem.buildNodeItem(compileValues(co,
+				an.methods()), an.names(),
+				(nodeParent.isEmpty() ? null : nodeParent), an
+						.isHideIfNull());
+
+		
+		if(an.isStandaloneChildNode()){
+			NodeItem nodeItemObjectItem = NodeItem.buildNodeItem(null,an.nodeParent(),an.isStandaloneChildNode());
+			nodeItemObjectItem.setChild(nodeItemForObjectItem);
+			nodeItems.add(nodeItemObjectItem);
+		}
+		else
+		{
+			nodeItems.addAll(nodeItemForObjectItem);
 		}
 	}
 

@@ -16,5 +16,6 @@ public @interface XMLNodesAdvanced {
 	String nodeParent() default "";
 	String[] methods();
 	boolean isHideIfNull() default false;
+	boolean isStandaloneChildNode() default false;
 
 }
