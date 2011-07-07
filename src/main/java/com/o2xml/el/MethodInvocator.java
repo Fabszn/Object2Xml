@@ -3,7 +3,7 @@ package com.o2xml.el;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
-import com.o2xml.core.CustomerBean;
+
 
 public class MethodInvocator {
 
